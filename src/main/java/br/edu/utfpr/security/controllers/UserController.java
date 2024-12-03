@@ -1,10 +1,10 @@
 package br.edu.utfpr.security.controllers;
 
+import br.edu.utfpr.security.controllers.dtos.CreateUserDTO;
 import br.edu.utfpr.security.model.User;
 import br.edu.utfpr.security.repositories.RoleRepository;
 import br.edu.utfpr.security.repositories.UserRepository;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

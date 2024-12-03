@@ -17,11 +17,8 @@ public class SecurityApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		// Código que executa no boot da aplicação
-
-		// Se o número de ROLES cadastradas for menor que 2, então devo cadastrar as ROLES:
-		// - ADMIN
-		// - BASIC
+		// Este código executa sempre que sua aplicação inicia
+		// Adiciona as Roles ADMIN e BASIC senão existirem DB
 		if (roleRepository.findAll().size() < 2){
 			var adminRole = new Role();
 			var basicRole = new Role();
