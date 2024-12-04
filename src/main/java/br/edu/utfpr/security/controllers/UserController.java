@@ -6,12 +6,12 @@ import br.edu.utfpr.security.repositories.RoleRepository;
 import br.edu.utfpr.security.repositories.UserRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
 import java.util.Set;
 
 @RestController
@@ -20,10 +20,14 @@ public class UserController {
 
     private UserRepository userRepository;
     private RoleRepository roleRepository;
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    public UserController(UserRepository userRepository, RoleRepository roleRepository) {
+    public UserController(UserRepository userRepository,
+                          RoleRepository roleRepository,
+                          BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
     @PostMapping
@@ -37,10 +41,16 @@ public class UserController {
 
         var novoUser = new User();
         novoUser.setUsername(createUserDTO.username());
-        novoUser.setPassword(createUserDTO.password());
+        novoUser.setPassword(this.bCryptPasswordEncoder.encode(createUserDTO.password()));
         novoUser.setRoles(Set.of(basicRole));
 
         userRepository.save(novoUser);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping
+    @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
+    public ResponseEntity<List<User>> getAllUsers(){
+        return ResponseEntity.ok(this.userRepository.findAll());
     }
 }
